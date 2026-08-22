@@ -283,5 +283,7 @@ match, and we would rather you look than take a number from us.
 ```
 
 ## License
-The corpus contains outputs from Llama-3.3-70B, Qwen-2.5-72B, DeepSeek-V3 and GPT-4o-mini; anyone redistributing the raw generations
+
+Data and documentation are CC BY 4.0 — see [LICENSE](LICENSE). The corpus contains outputs from
+Llama-3.3-70B, Qwen-2.5-72B, DeepSeek-V3 and GPT-4o-mini; anyone redistributing the raw generations
 should check the relevant providers' terms.
