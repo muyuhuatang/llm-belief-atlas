@@ -215,7 +215,7 @@ with gzip.open("data/responses.jsonl.gz", "rt") as f:
 even where the model's own `justification` is decisive. The signature is
 `option_logprobs[0] == option_logprobs[4] == max(option_logprobs)`, and it marks **18,420 of the
 75,867 non-refused rows (24.3%)**; 77.8% of those open with an explicit "agree" or "disagree", and
-6,141 (8.1%) land at a stance of essentially zero.
+4,820 of them (26.2%) land at a stance of essentially zero.
 
 **Only `justification` escaped it.** `option_logprobs` is the matcher's own output, not a raw
 reading: in 69,129 rows (90.9%) it holds the identical log-probability for the two opposite extremes,
