@@ -1,0 +1,95 @@
+{
+ "version": 1,
+ "count": 76048,
+ "source": "elicited",
+ "representations": [
+  "agreement",
+  "reflection",
+  "logprob"
+ ],
+ "positions": {
+  "agreement": "pos_agreement.bin",
+  "reflection": "pos_reflection.bin",
+  "logprob": "pos_logprob.bin"
+ },
+ "attributes": {
+  "model": {
+   "file": "attr_model.bin",
+   "dtype": "uint8",
+   "labels": [
+    "meta-llama/llama-3.3-70b-instruct",
+    "qwen/qwen-2.5-72b-instruct",
+    "deepseek/deepseek-chat",
+    "gpt-4o-mini"
+   ]
+  },
+  "domain": {
+   "file": "attr_domain.bin",
+   "dtype": "uint8",
+   "labels": [
+    "ethics",
+    "politics",
+    "economics",
+    "science",
+    "metaphysics",
+    "technology",
+    "social",
+    "aesthetics",
+    "values",
+    "factual-control"
+   ]
+  },
+  "stance": {
+   "file": "attr_stance.bin",
+   "dtype": "float32",
+   "range": [
+    -1.0,
+    1.0
+   ]
+  },
+  "uncertainty": {
+   "file": "attr_uncertainty.bin",
+   "dtype": "float32",
+   "range": [
+    0.0,
+    1.0
+   ]
+  },
+  "inconsistency": {
+   "file": "attr_inconsistency.bin",
+   "dtype": "float32",
+   "range": [
+    0.0,
+    1.0
+   ]
+  }
+ },
+ "bounds": {
+  "agreement": [
+   -0.208025261759758,
+   -0.13330785930156708,
+   0.26419126987457275,
+   0.11388015002012253
+  ],
+  "reflection": [
+   -0.4383096694946289,
+   -0.4434799253940582,
+   0.6722687482833862,
+   0.5484456419944763
+  ],
+  "logprob": [
+   -0.09572411328554153,
+   -0.10179700702428818,
+   0.052623700350522995,
+   0.09390939772129059
+  ]
+ },
+ "extra": {
+  "reembedded": "openai"
+ },
+ "note": "The stance array inherits an option-matching defect whose signature is option_logprobs[0] == option_logprobs[4] == max(option_logprobs): it marks 18,420 of the 75,867 non-refused rows (24.3%), of which 77.8% open with an explicit agree or disagree in the free text. Recompute from justification, not from option_logprobs. See the \"Two bugs we found in our own code\" section of the top-level README.md.",
+ "shipped": [
+  "pos_reflection.bin"
+ ],
+ "derived": "Only pos_reflection.bin ships. The other seven arrays named below are a convenience cache and were removed to keep the release minimal; every one of them rebuilds from data/responses.jsonl.gz (five bit-for-bit, the two other layouts to float32 rounding) using the recipe in README.md. The names and dtypes are kept here so a rebuild writes the same filenames."
+}
