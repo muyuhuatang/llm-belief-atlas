@@ -43,6 +43,9 @@ rather than squashing everything else into the middle.)
 - **Panel 3 — Agreement.** The agreement readout as a stance value, spread out with one row per topic
   so you can see how each topic leans. The black tick on each row is that topic's average.
 
+Panels 2 and 3 are drawn from values that the scoring bug [below](#two-bugs-we-found-in-our-own-code)
+distorts; panel 1 is not affected.
+
 **The nine numbered rings are the same nine beliefs in every panel.** That is the whole point of the
 picture. Find the ringed anchor 3 — a politics belief — in each one. It is one dot, so its *stance* is
 the same number in all three, and yet it lands in a completely different neighbourhood each time. **Where the three panels disagree about a dot, that
@@ -76,9 +79,13 @@ of the proposition by itself; most of it depends on which model you asked.
 > outright. The claim that survived the groupings we tried is the weaker, more useful one: **how you
 > ask is not a rounding error next to what you ask about.**
 
-**Relabelling or reordering the answer options moves a stance at least as much as rewording the
-question does.** We are not giving an effect size for this, because two bugs in our own code inflate
-exactly this comparison — see below. The direction holds; the magnitude is being re-derived.
+All three figures are computed from `stance`, which the scoring bug
+[below](#two-bugs-we-found-in-our-own-code) distorts; they are being re-derived.
+
+**Relabelling or reordering the answer options appeared to move a stance at least as much as
+rewording the question.** We are not giving an effect size for this, because two bugs in our own code
+inflate exactly this comparison (see [below](#two-bugs-we-found-in-our-own-code)). Both the direction
+and the magnitude are being re-derived.
 
 **The 49 phrasings are not equally represented**, and the roster is a design choice, not a measure of
 importance:
@@ -93,6 +100,38 @@ importance:
 | negation | 3,104 | 4.1% |
 | option reordering | 3,104 | 4.1% |
 | plain default (the unperturbed baseline prompt) | 1,552 | 2.0% |
+
+---
+
+## Two bugs we found in our own code
+
+**The first bug is in the answer matcher, which collides on shared words.** Our two extreme answer
+options, "strongly disagree" and "strongly agree", share their first word. In every answer read
+through the native log-probability route with word labels (34,993 of 34,993 non-refused rows, from
+`gpt-4o-mini` and most `llama-3.3-70b-instruct` rows), the two extremes received exactly the same
+log-probability. With numeric or letter labels, the same happened in only 32 of 2,161 such rows. So
+wherever a model put weight on an extreme, its preference between the two extremes was lost and the
+stance was pulled toward zero. In 18,420 of the 75,867 non-refused rows (24.3%), the tied extremes
+were also the top option, and a decisive answer was recorded as neutral; 14,327 of those (77.8%) open
+with an explicit "agree" or "disagree".
+
+*Worked example* (the first line of `responses.jsonl.gz`): `llama-3.3-70b-instruct`, item
+`eth.welfare`, condition `persona=a climate scientist.persona_kind=role`. The answer begins "strongly
+agree. As a climate scientist, I believe…", but its `option_logprobs` are
+`[-0.6946, -20.6916, -20.6916, -6.5696, -0.6946]`: "strongly disagree" and "strongly agree" tie at
+the top, so `stance` is 0.0007 and `likert` is 2, the neutral midpoint.
+
+**Why it inflates the relabelling comparison.** Relabelled options (numeric, flipped numeric,
+letters) share no words, so their extremes almost never tie (32 of 2,161 native rows, 28 of them with
+both extremes at the bottom). Comparing relabelled conditions with word-label conditions therefore
+mixes a real elicitation effect with the bug.
+
+**The second bug** also inflates the relabelling comparison. It is being written up together with
+the corrected numbers.
+
+**What is still safe to use.** The written answers (`justification`) escaped the bug, and so does
+panel 1, which is drawn from them. Do not recompute a stance from `option_logprobs`; recompute it from
+the free text.
 
 ---
 
