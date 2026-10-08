@@ -188,6 +188,12 @@ if __name__ == "__main__":
         print(f"wrote data/atlas/{name}.bin  {arr.shape} {arr.dtype}")
 ```
 
+**For the corrected arrays**, change the first line of `__main__` to
+`rows = load_rows("data/responses_corrected.jsonl.gz")`. That rebuilds exactly the arrays the corrected figure
+([`../../images/three-channels-corrected.png`](../../images/three-channels-corrected.png)) was drawn from: all seven
+match bit-for-bit, checked. Keep `pos_reflection.bin` as it is. It comes from the written answers, which the
+correction does not touch.
+
 Most of the runtime is parsing the 11 MB log. Verified against the arrays that used to ship here:
 `attr_stance`, `attr_uncertainty`, `attr_inconsistency`, `attr_model` and `attr_domain` come back
 **bit-for-bit identical**; `pos_logprob` and `pos_agreement` agree to 1.8e-07 and 1.2e-07, which is
@@ -197,7 +203,8 @@ Most of the runtime is parsing the 11 MB log. Verified against the arrays that u
 
 ## Before you use `attr_stance`
 
-It carries a known defect. A matcher that collides on shared words records answers as neutral even
+**Rebuilt from the corrected log, it is the corrected stance; use that.** Rebuilt from the original log, it carries
+a known defect, described below. A matcher that collides on shared words records answers as neutral even
 where the model's own `justification` is decisive. The signature is
 `option_logprobs[0] == option_logprobs[4] == max(option_logprobs)`, and it marks **18,420 of the
 75,867 non-refused rows (24.3%)**; 77.8% of those open with an explicit "agree" or "disagree". Two
@@ -206,8 +213,8 @@ published findings were withdrawn because of it.
 **Do not recompute from `option_logprobs` — that is where the defect lives.** The stored vector is
 the matcher's own output: in 69,129 of 76,048 rows (90.9%) it carries the identical log-probability
 for the two opposite extremes, and reconstructing a stance from it returns the same wrong number.
-Only the `justification` text escaped it. Worked example in the
-[top-level README](../../README.md#two-bugs-we-found-in-our-own-code).
+Only the `justification` text escaped it. The corrected log repairs the probabilities; worked example and the
+other four bugs in the [top-level README](../../README.md#five-bugs-we-found-in-our-own-code).
 
 ## Before you use `attr_uncertainty`
 
